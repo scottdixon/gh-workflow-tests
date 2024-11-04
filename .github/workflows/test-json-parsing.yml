@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publishedPackages:
-        description: 'JSON string of published packages'
+        description: "JSON string of published packages"
         required: true
         default: '[{"name": "@shopify/hydrogen", "version": "1.2.3"}, {"name": "@shopify/other", "version": "2.0.0"}]'
 
@@ -25,6 +25,6 @@ jobs:
           HYDROGEN_VERSION=$(echo $PACKAGES | jq -r '.[] | select(.name == "@shopify/hydrogen") | .version')
           echo "HYDROGEN_VERSION=$HYDROGEN_VERSION"
           echo "HYDROGEN_VERSION=$HYDROGEN_VERSION" >> $GITHUB_ENV
-
       - name: Print Hydrogen version
-        run: echo "Extracted Hydrogen version: ${{ env.HYDROGEN_VERSION }}"
+        run: |
+          echo "Extracted Hydrogen version: ${{ env.HYDROGEN_VERSION }}"
