@@ -15,8 +15,8 @@ jobs:
       - name: Test fromJson function
         run: |
           echo "Published Packages: ${{ inputs.publishedPackages }}"
-          echo "Contains @shopify/hydrogen: ${{ contains(fromJson(inputs.publishedPackages)[*].name, '@shopify/hydrogen') }}"
-          echo "Hydrogen version: ${{ fromJson(inputs.publishedPackages)[?(@.name == '@shopify/hydrogen')].version }}"
+          # echo "Contains @shopify/hydrogen: ${{ contains(fromJson(inputs.publishedPackages)[*].name, '@shopify/hydrogen') }}"
+          # echo "Hydrogen version: ${{ fromJson(inputs.publishedPackages)[?(@.name == '@shopify/hydrogen')].version }}"
 
       - name: Extract Hydrogen version
         id: extract_version
