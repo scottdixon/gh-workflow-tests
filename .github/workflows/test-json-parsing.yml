@@ -9,20 +9,23 @@ on:
         default: '[{"name": "@shopify/hydrogen", "version": "1.2.3"}, {"name": "@shopify/other", "version": "2.0.0"}]'
 
 jobs:
-  test_json_parsing:
+  extract_version:
     runs-on: ubuntu-latest
+    outputs:
+      hydrogen_version: ${{ steps.extract_version.outputs.hydrogen_version }}
     steps:
-      - name: Test fromJson function
-        run: |
-          echo "Published Packages: ${{ inputs.publishedPackages }}"
-
       - name: Extract Hydrogen version
         id: extract_version
         run: |
           PACKAGES='${{ inputs.publishedPackages }}'
           HYDROGEN_VERSION=$(echo $PACKAGES | jq -r '.[] | select(.name == "@shopify/hydrogen") | .version')
-          echo "HYDROGEN_VERSION=$HYDROGEN_VERSION"
-          echo "HYDROGEN_VERSION=$HYDROGEN_VERSION" >> $GITHUB_ENV
+          echo "hydrogen_version=$HYDROGEN_VERSION" >> $GITHUB_OUTPUT
+
+  conditional_job:
+    needs: extract_version
+    if: needs.extract_version.outputs.hydrogen_version != ''
+    runs-on: ubuntu-latest
+    steps:
       - name: Print Hydrogen version
         run: |
-          echo "Extracted Hydrogen version: ${{ env.HYDROGEN_VERSION }}"
+          echo "FOUND Hydrogen version: ${{ needs.extract_version.outputs.hydrogen_version }}"
