@@ -9,36 +9,17 @@ on:
         default: '[{"name": "@shopify/hydrogen", "version": "1.2.3"}, {"name": "@shopify/other", "version": "2.0.0"}]'
 
 jobs:
-  extract_version:
+  another_job:
     runs-on: ubuntu-latest
-    outputs:
-      hydrogen_version: ${{ steps.extract_version.outputs.hydrogen_version }}
     steps:
       - name: Extract Hydrogen version
         id: extract_version
         run: |
           PACKAGES='${{ inputs.publishedPackages }}'
           HYDROGEN_VERSION=$(echo $PACKAGES | jq -r '.[] | select(.name == "@shopify/hydrogen") | .version')
-          echo "hydrogen_version=$HYDROGEN_VERSION" >> $GITHUB_OUTPUT
+          echo "HYDROGEN_VERSION=$HYDROGEN_VERSION" >> $GITHUB_ENV
 
-  extract_version_2:
-    runs-on: ubuntu-latest
-    outputs:
-      hydrogen_version_2: ${{ steps.extract_version_2.outputs.hydrogen_version_2 }}
-    steps:
-      - name: Extract Hydrogen version
-        id: extract_version_2
-        run: |
-          PACKAGES='${{ inputs.publishedPackages }}'
-          HYDROGEN_VERSION_2=$(echo $PACKAGES | jq -r '.[] | select(.name == "@shopify/hydrogen") | .version')
-          echo "hydrogen_version_2=$HYDROGEN_VERSION_2" >> $GITHUB_OUTPUT
-
-  conditional_job:
-    needs: [extract_version, extract_version_2]
-    if: needs.extract_version.outputs.hydrogen_version != ''
-    runs-on: ubuntu-latest
-    steps:
       - name: Print Hydrogen version
+        if: env.HYDROGEN_VERSION != ''
         run: |
-          echo "FOUND Hydrogen version: ${{ needs.extract_version.outputs.hydrogen_version }}"
-          echo "FOUND Hydrogen version 2: ${{ needs.extract_version_2.outputs.hydrogen_version_2 }}"
+          echo "FOUND Hydrogen version: ${{ env.HYDROGEN_VERSION }}"
